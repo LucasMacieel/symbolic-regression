@@ -1,0 +1,17 @@
+[project]
+name = "genetic-programming"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "deap>=1.4.4",
+    "matplotlib>=3.10.9",
+    "networkx>=3.4.2",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "pydot>=4.0.1",
+    "pyyaml>=6.0.3",
+    "scipy>=1.15.3",
+    "sympy>=1.14.0",
+]

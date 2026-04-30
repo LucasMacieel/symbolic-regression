@@ -1,0 +1,26 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Genetic Programming — Default Experiment Configuration
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Population & generations
+population_size: 500
+n_generations: 50
+
+# Genetic operator probabilities
+crossover_prob: 0.9
+mutation_prob: 0.1
+
+# Selection
+tournament_size: 7
+
+# Tree constraints
+max_tree_depth: 17
+min_init_depth: 2
+max_init_depth: 6
+
+# Primitive set options
+include_trig: true
+include_exp_log: true
+
+# Experiment
+n_runs: 30
