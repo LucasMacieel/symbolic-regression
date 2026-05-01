@@ -14,6 +14,10 @@ The formatter applies only lightweight, structural rewrites:
 
 from __future__ import annotations
 
+import multiprocessing
+import sympy
+from sympy.parsing.sympy_parser import parse_expr
+
 from deap import gp
 
 
@@ -24,16 +28,16 @@ from deap import gp
 # (precedence, is_right_associative)
 _BINARY_OPS: dict[str, tuple[int, bool, str]] = {
     #  name           prec  right-assoc  symbol
-    "add":          (1, False, "+"),
-    "sub":          (1, False, "-"),
-    "mul":          (2, False, "*"),
+    "add": (1, False, "+"),
+    "sub": (1, False, "-"),
+    "mul": (2, False, "*"),
     "protectedDiv": (2, False, "/"),
 }
 
 _UNARY_OPS: dict[str, str] = {
-    "neg":          "-",
-    "sin":          "sin",
-    "cos":          "cos",
+    "neg": "-",
+    "sin": "sin",
+    "cos": "cos",
     "protectedLog": "log",
     "protectedExp": "exp",
     "protectedSqrt": "sqrt",
@@ -46,6 +50,7 @@ _VAR_NAMES = ("x", "y", "z", "w")
 # ──────────────────────────────────────────────────────────────────────────────
 # Internal node representation
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 class _Node:
     """Lightweight expression node for formatting."""
@@ -76,6 +81,7 @@ class _Node:
 # ──────────────────────────────────────────────────────────────────────────────
 # Tree builder (prefix → node tree)
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def _build_node_tree(tree: gp.PrimitiveTree) -> _Node:
     """
@@ -131,6 +137,7 @@ def _build_node_tree(tree: gp.PrimitiveTree) -> _Node:
 # Structural rewrites  (pure syntactic, no SymPy)
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def _node_str(node: _Node) -> str:
     """Return the raw string of a node (without formatting context)."""
     return _format_node(node, parent_prec=0, is_right=False)
@@ -170,6 +177,7 @@ def _rewrite(node: _Node) -> _Node:
 # Formatter
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def _format_node(node: _Node, parent_prec: int = 0, is_right: bool = False) -> str:
     """Recursively format a node into a clean algebraic string."""
 
@@ -181,7 +189,7 @@ def _format_node(node: _Node, parent_prec: int = 0, is_right: bool = False) -> s
     # ── Power (synthetic node from rewrite) ───────────────────────────────────
     if op == "__pow__":
         base = _format_node(node.children[0], parent_prec=3, is_right=False)
-        exp  = node.children[1].leaf or _format_node(node.children[1])
+        exp = node.children[1].leaf or _format_node(node.children[1])
         # Parenthesise base if it's not a simple token
         if not node.children[0].is_leaf():
             base = f"({base})"
@@ -194,7 +202,7 @@ def _format_node(node: _Node, parent_prec: int = 0, is_right: bool = False) -> s
 
         # For division, check if right child needs parens (it usually does
         # unless it's a leaf or power node)
-        left_str  = _format_node(left,  parent_prec=prec, is_right=False)
+        left_str = _format_node(left, parent_prec=prec, is_right=False)
         right_str = _format_node(right, parent_prec=prec, is_right=True)
 
         # Parenthesise left if lower precedence
@@ -233,6 +241,7 @@ def _format_node(node: _Node, parent_prec: int = 0, is_right: bool = False) -> s
 # ──────────────────────────────────────────────────────────────────────────────
 # Public API
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def format_expression(
     individual: gp.PrimitiveTree,
@@ -300,3 +309,37 @@ def simplify_individual(
         "complexity": len(individual),
         "strategy": "algebraic",
     }
+
+
+def _run_sympy_simplification(expr_str: str, return_dict: dict):
+    """Run sympy simplification in a separate process."""
+    try:
+        # Convert string to sympy expression
+        expr = parse_expr(expr_str)
+        # Deep algebraic simplification
+        simplified = sympy.simplify(expr)
+        return_dict["result"] = str(simplified)
+    except Exception as e:
+        return_dict["error"] = str(e)
+
+
+def safe_algebraic_reduction(expr_str: str, timeout_seconds: int = 5) -> str:
+    """Safely attempts to reduce an expression with a hard timeout to avoid hangs."""
+    manager = multiprocessing.Manager()
+    return_dict = manager.dict()
+
+    # Run in an isolated process to allow hard-killing if SymPy hangs
+    p = multiprocessing.Process(
+        target=_run_sympy_simplification, args=(expr_str, return_dict)
+    )
+    p.start()
+    p.join(timeout_seconds)
+
+    if p.is_alive():
+        p.terminate()  # Kill it if it hangs
+        p.join()
+        return f"{expr_str} (Simplification timed out)"
+
+    if "result" in return_dict:
+        return return_dict["result"]
+    return expr_str

@@ -33,19 +33,21 @@ def _rand_const() -> float:
 # Protected operators
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def protectedDiv(left, right):
     """Division protected against zero-division (vectorized)."""
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         if np.isscalar(right):
             if abs(right) < 1e-10:
                 return 1.0
             return left / right
-        
+
         right_abs = np.abs(right)
         mask = right_abs < 1e-10
         safe_right = np.where(mask, 1.0, right)
         res = left / safe_right
         return np.where(mask, 1.0, res)
+
 
 def protectedSqrt(x):
     """Square root protected against negative arguments (vectorized)."""
@@ -53,15 +55,6 @@ def protectedSqrt(x):
         return math.sqrt(abs(x))
     return np.sqrt(np.abs(x))
 
-
-def protectedExp(x):
-    """Exponential clamped to avoid overflow (vectorized)."""
-    if np.isscalar(x):
-        try:
-            return math.exp(min(x, 100.0))
-        except OverflowError:
-            return math.exp(100.0)
-    return np.exp(np.minimum(x, 100.0))
 
 def protectedSin(x):
     """Sine function (vectorized)."""
@@ -79,8 +72,6 @@ _VAR_NAMES = ["x", "y", "z", "u", "v", "w", "q"]
 
 def build_primitive_set(
     n_vars: int = 1,
-    include_sqrt: bool = True,
-    include_trig: bool = True,
 ) -> gp.PrimitiveSet:
     """
     Build a DEAP PrimitiveSet with configurable operator suites.
@@ -89,10 +80,6 @@ def build_primitive_set(
     ----------
     n_vars : int
         Number of input variables.
-    include_sqrt : bool
-        Whether to include protectedSqrt.
-        Default ``True`` — required for pendulum period.
-        Default ``False`` — not needed for physics benchmarks.
 
     Returns
     -------
@@ -109,12 +96,10 @@ def build_primitive_set(
     pset.addPrimitive(operator.neg, 1)
 
     # Square root — needed for pendulum period
-    if include_sqrt:
-        pset.addPrimitive(protectedSqrt, 1)
+    pset.addPrimitive(protectedSqrt, 1)
 
     # Trigonometry — needed for projectile range
-    if include_trig:
-        pset.addPrimitive(protectedSin, 1)
+    pset.addPrimitive(protectedSin, 1)
 
     # Ephemeral random constant in [-1, 1]
     pset.addEphemeralConstant("rand_const", _rand_const)

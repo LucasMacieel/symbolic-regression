@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -27,28 +28,30 @@ from src.benchmarks import Benchmark
 # Style setup
 # ──────────────────────────────────────────────────────────────────────────────
 
-plt.rcParams.update({
-    "figure.facecolor": "#0d1117",
-    "axes.facecolor": "#161b22",
-    "axes.edgecolor": "#30363d",
-    "axes.labelcolor": "#c9d1d9",
-    "text.color": "#c9d1d9",
-    "xtick.color": "#8b949e",
-    "ytick.color": "#8b949e",
-    "grid.color": "#21262d",
-    "grid.alpha": 0.6,
-    "legend.facecolor": "#161b22",
-    "legend.edgecolor": "#30363d",
-    "legend.labelcolor": "#c9d1d9",
-    "font.family": "sans-serif",
-    "font.size": 11,
-    "axes.titlesize": 14,
-    "axes.labelsize": 12,
-    "figure.dpi": 150,
-    "savefig.dpi": 300,
-    "savefig.bbox": "tight",
-    "savefig.facecolor": "#0d1117",
-})
+plt.rcParams.update(
+    {
+        "figure.facecolor": "#0d1117",
+        "axes.facecolor": "#161b22",
+        "axes.edgecolor": "#30363d",
+        "axes.labelcolor": "#c9d1d9",
+        "text.color": "#c9d1d9",
+        "xtick.color": "#8b949e",
+        "ytick.color": "#8b949e",
+        "grid.color": "#21262d",
+        "grid.alpha": 0.6,
+        "legend.facecolor": "#161b22",
+        "legend.edgecolor": "#30363d",
+        "legend.labelcolor": "#c9d1d9",
+        "font.family": "sans-serif",
+        "font.size": 11,
+        "axes.titlesize": 14,
+        "axes.labelsize": 12,
+        "figure.dpi": 150,
+        "savefig.dpi": 300,
+        "savefig.bbox": "tight",
+        "savefig.facecolor": "#0d1117",
+    }
+)
 
 # Color palette
 COLORS = {
@@ -65,6 +68,7 @@ COLORS = {
 # ──────────────────────────────────────────────────────────────────────────────
 # 1. Convergence plot
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def plot_convergence(
     runs: list[dict[str, Any]],
@@ -101,7 +105,9 @@ def plot_convergence(
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
 
     # Fitness convergence
-    ax1.semilogy(gens, min_mean, color=COLORS["primary"], linewidth=2, label="Best (min)")
+    ax1.semilogy(
+        gens, min_mean, color=COLORS["primary"], linewidth=2, label="Best (min)"
+    )
     ax1.fill_between(
         gens,
         np.maximum(min_mean - min_std, 1e-15),
@@ -109,7 +115,14 @@ def plot_convergence(
         alpha=0.2,
         color=COLORS["primary"],
     )
-    ax1.semilogy(gens, avg_mean, color=COLORS["secondary"], linewidth=1.5, alpha=0.8, label="Average")
+    ax1.semilogy(
+        gens,
+        avg_mean,
+        color=COLORS["secondary"],
+        linewidth=1.5,
+        alpha=0.8,
+        label="Average",
+    )
     ax1.fill_between(
         gens,
         np.maximum(avg_mean - avg_std, 1e-15),
@@ -123,7 +136,9 @@ def plot_convergence(
     ax1.grid(True, alpha=0.3)
 
     # Tree size evolution
-    ax2.plot(gens, size_mean, color=COLORS["accent"], linewidth=2, label="Avg tree size")
+    ax2.plot(
+        gens, size_mean, color=COLORS["accent"], linewidth=2, label="Avg tree size"
+    )
     ax2.fill_between(
         gens,
         np.maximum(size_mean - size_std, 0),
@@ -144,6 +159,7 @@ def plot_convergence(
 # ──────────────────────────────────────────────────────────────────────────────
 # 2. Tree visualization (Graphviz dot layout via pydot)
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def _hierarchy_layout(
     G: nx.Graph, root: int, width: float = 1.0, vert_gap: float = 1.0
@@ -210,11 +226,15 @@ def plot_tree(
     # Pure-Python hierarchical layout — root is always nodes[0] in DEAP
     pos = _hierarchy_layout(G, root=nodes[0])
 
-    fig, ax = plt.subplots(figsize=(max(10, len(nodes) * 0.5), max(6, individual.height * 1.5)))
+    fig, ax = plt.subplots(
+        figsize=(max(10, len(nodes) * 0.5), max(6, individual.height * 1.5))
+    )
 
     nx.draw_networkx_edges(G, pos, ax=ax, edge_color="#30363d", width=1.5)
     nx.draw_networkx_nodes(
-        G, pos, ax=ax,
+        G,
+        pos,
+        ax=ax,
         node_color=node_colors,
         node_size=900,
         edgecolors="#0d1117",
@@ -236,8 +256,13 @@ def plot_tree(
             display_labels[n] = s
 
     nx.draw_networkx_labels(
-        G, pos, display_labels, ax=ax,
-        font_size=9, font_color="#0d1117", font_weight="bold",
+        G,
+        pos,
+        display_labels,
+        ax=ax,
+        font_size=9,
+        font_color="#0d1117",
+        font_weight="bold",
     )
 
     # Legend
@@ -249,6 +274,7 @@ def plot_tree(
     ax.legend(handles=legend_items, loc="upper left", fontsize=9)
 
     from src.simplify import format_expression
+
     simplified_str = format_expression(individual)
     if len(simplified_str) > 80:
         simplified_str = simplified_str[:77] + "..."
@@ -264,10 +290,10 @@ def plot_tree(
     plt.close(fig)
 
 
-
 # ──────────────────────────────────────────────────────────────────────────────
 # 3. Fitness vs. Complexity scatter
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def plot_fitness_vs_complexity(
     runs: list[dict[str, Any]],
@@ -281,9 +307,14 @@ def plot_fitness_vs_complexity(
     fig, ax = plt.subplots(figsize=(8, 6))
 
     scatter = ax.scatter(
-        sizes, fitnesses,
-        c=fitnesses, cmap="cool", s=80, alpha=0.8,
-        edgecolors="#0d1117", linewidths=1,
+        sizes,
+        fitnesses,
+        c=fitnesses,
+        cmap="cool",
+        s=80,
+        alpha=0.8,
+        edgecolors="#0d1117",
+        linewidths=1,
         zorder=3,
     )
     cbar = fig.colorbar(scatter, ax=ax, label="Fitness (MSE)")
@@ -302,6 +333,7 @@ def plot_fitness_vs_complexity(
 # ──────────────────────────────────────────────────────────────────────────────
 # 4. Prediction vs. ground truth
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def plot_prediction(
     individual: gp.PrimitiveTree,
@@ -330,29 +362,60 @@ def plot_prediction(
 
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    ax.plot(x_dense, y_true, color=COLORS["primary"], linewidth=2.5, label="Ground truth", zorder=2)
-    ax.plot(x_dense, y_pred, color=COLORS["secondary"], linewidth=2, linestyle="--", label="GP prediction", zorder=3)
+    ax.plot(
+        x_dense,
+        y_true,
+        color=COLORS["primary"],
+        linewidth=2.5,
+        label="Ground truth",
+        zorder=2,
+    )
+    ax.plot(
+        x_dense,
+        y_pred,
+        color=COLORS["secondary"],
+        linewidth=2,
+        linestyle="--",
+        label="GP prediction",
+        zorder=3,
+    )
     ax.scatter(
-        benchmark.X, benchmark.y,
-        color=COLORS["accent"], s=40, zorder=4,
-        label="Training points", edgecolors="#0d1117", linewidths=0.5,
+        benchmark.X,
+        benchmark.y,
+        color=COLORS["accent"],
+        s=40,
+        zorder=4,
+        label="Training points",
+        edgecolors="#0d1117",
+        linewidths=0.5,
     )
 
     # Format expression as clean algebraic infix string
     from src.simplify import format_expression
+
     simplified_str = format_expression(individual)
     if len(simplified_str) > 80:
         simplified_str = simplified_str[:77] + "..."
     ax.text(
-        0.02, 0.98, f"f(x) = {simplified_str}",
-        transform=ax.transAxes, fontsize=9,
+        0.02,
+        0.98,
+        f"f(x) = {simplified_str}",
+        transform=ax.transAxes,
+        fontsize=9,
         verticalalignment="top",
-        bbox=dict(boxstyle="round,pad=0.5", facecolor="#21262d", edgecolor="#30363d", alpha=0.9),
+        bbox=dict(
+            boxstyle="round,pad=0.5",
+            facecolor="#21262d",
+            edgecolor="#30363d",
+            alpha=0.9,
+        ),
     )
 
     ax.set_xlabel("x")
     ax.set_ylabel("f(x)")
-    ax.set_title(f"Prediction vs. Ground Truth — {benchmark.name}: {benchmark.description}")
+    ax.set_title(
+        f"Prediction vs. Ground Truth — {benchmark.name}: {benchmark.description}"
+    )
     ax.legend(loc="lower right")
     ax.grid(True, alpha=0.3)
 
@@ -364,6 +427,7 @@ def plot_prediction(
 # ──────────────────────────────────────────────────────────────────────────────
 # 5. Cross-benchmark comparison (box plot)
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def plot_benchmark_comparison(
     all_results: dict[str, dict[str, Any]],
@@ -379,11 +443,17 @@ def plot_benchmark_comparison(
     fig, ax = plt.subplots(figsize=(max(8, len(names) * 1.5), 6))
 
     bp = ax.boxplot(
-        data, labels=names, patch_artist=True,
+        data,
+        labels=names,
+        patch_artist=True,
         medianprops=dict(color="#f0f6fc", linewidth=2),
         whiskerprops=dict(color="#8b949e"),
         capprops=dict(color="#8b949e"),
-        flierprops=dict(markerfacecolor=COLORS["secondary"], markeredgecolor=COLORS["secondary"], markersize=4),
+        flierprops=dict(
+            markerfacecolor=COLORS["secondary"],
+            markeredgecolor=COLORS["secondary"],
+            markersize=4,
+        ),
     )
 
     for i, box in enumerate(bp["boxes"]):
@@ -406,6 +476,7 @@ def plot_benchmark_comparison(
 # ──────────────────────────────────────────────────────────────────────────────
 # Master plot generator
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def generate_all_plots(
     experiment_result: dict[str, Any],

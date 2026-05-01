@@ -50,15 +50,26 @@ def setup_toolbox(pset: gp.PrimitiveSet, config: dict[str, Any]) -> base.Toolbox
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
 
-    tournsize = config.get("tournament_size", 7)
-    toolbox.register("select", tools.selTournament, tournsize=tournsize)
+    fitness_tournsize = config.get("tournament_size", 7)
+    size_tournsize = config.get("size_tournament_size", 1.4)
+    toolbox.register(
+        "select",
+        tools.selDoubleTournament,
+        fitness_size=fitness_tournsize,
+        parsimony_size=size_tournsize,
+        fitness_first=True,
+    )
     toolbox.register("mate", gp.cxOnePoint)
     toolbox.register("expr_mut", gp.genFull, min_=0, max_=2, pset=pset)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
 
     max_depth = config.get("max_tree_depth", 17)
-    toolbox.decorate("mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=max_depth))
-    toolbox.decorate("mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=max_depth))
+    toolbox.decorate(
+        "mate", gp.staticLimit(key=operator.attrgetter("height"), max_value=max_depth)
+    )
+    toolbox.decorate(
+        "mutate", gp.staticLimit(key=operator.attrgetter("height"), max_value=max_depth)
+    )
 
     return toolbox
 
@@ -95,14 +106,14 @@ def evaluate_individual(
             pred = func(X.ravel())
         else:
             pred = func(*[X[:, j] for j in range(n_vars)])
-            
+
         if not np.all(np.isfinite(pred)):
             return (PENALTY,)
-            
+
         mse = float(np.mean((pred - y) ** 2))
         if not math.isfinite(mse):
             return (PENALTY,)
-            
+
         return (mse,)
     except _TimeoutError:
         return (PENALTY,)

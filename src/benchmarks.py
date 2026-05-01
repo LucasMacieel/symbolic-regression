@@ -52,7 +52,9 @@ class Benchmark:
         rng = np.random.default_rng(seed=42)  # reproducible
 
         if self.n_vars == 1:
-            self.X = np.linspace(self.domain[0], self.domain[1], self.n_points).reshape(-1, 1)
+            self.X = np.linspace(self.domain[0], self.domain[1], self.n_points).reshape(
+                -1, 1
+            )
             self.y = np.array([self.func(x) for x in self.X[:, 0]])
 
         elif self.n_vars == 2:
@@ -65,7 +67,9 @@ class Benchmark:
 
         else:
             # Random uniform sampling for 3+ variables
-            self.X = rng.uniform(self.domain[0], self.domain[1], size=(self.n_points, self.n_vars))
+            self.X = rng.uniform(
+                self.domain[0], self.domain[1], size=(self.n_points, self.n_vars)
+            )
             self.y = np.array([self.func(*row) for row in self.X])
 
     # ------------------------------------------------------------------
@@ -100,31 +104,40 @@ class Benchmark:
 # friendly range for GP.
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def _newtons_second_law(x: float, y: float) -> float:
     """F = m·a  |  x → mass m (kg), y → acceleration a (m/s²)"""
     return x * y
+
 
 def _kinetic_energy(x: float, y: float) -> float:
     """E = ½·m·v²  |  x → mass m (kg), y → velocity v (m/s)"""
     return 0.5 * x * y**2
 
+
 def _newtons_gravity(x: float, y: float, z: float) -> float:
     """F = G·m₁·m₂/r²  |  x → m₁ (kg), y → m₂ (kg), z → r (m), unit G=1"""
     return x * y / max(z**2, 1e-10)
+
 
 def _keplers_third_law(x: float, y: float) -> float:
     """T = 2π·√(a³/GM)  |  x → semi-major axis a (m), y → mass M (kg), unit G=1"""
     return 2 * math.pi * math.sqrt(max(x**3, 0.0) / max(abs(y), 1e-10))
 
+
 def _stefan_boltzmann(x: float, y: float) -> float:
     """P = σ·A·T⁴  |  x → area A (m²), y → temperature T (K), σ=5.67"""
     return 5.67 * x * y**4
+
 
 def _projectile_range(x: float, y: float) -> float:
     """R = v₀²·sin(2θ)/g  |  x → v₀ (m/s), y → θ (rad), g=9.81"""
     return x**2 * math.sin(2 * y) / 9.81
 
-def _bernoullis_equation(x: float, y: float, z: float, u: float, v: float, w: float) -> float:
+
+def _bernoullis_equation(
+    x: float, y: float, z: float, u: float, v: float, w: float
+) -> float:
     """P₂ = P₁ + ½ρ(v₁² - v₂²) + ρg(h₁ - h₂)
     x → P₁ (Pa), y → ρ (kg/m³), z → v₁ (m/s), u → v₂ (m/s), v → h₁ (m), w → h₂ (m), g=9.81
     """

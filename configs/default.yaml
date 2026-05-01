@@ -12,14 +12,12 @@ mutation_prob: 0.1
 
 # Selection
 tournament_size: 7
+size_tournament_size: 1.4
 
 # Tree constraints
-max_tree_depth: 17
+max_tree_depth: 10
 min_init_depth: 2
 max_init_depth: 6
-
-# Primitive set options  (physics-focused defaults)
-include_sqrt: true       # protectedSqrt — needed for pendulum
 
 # Experiment
 n_runs: 30

@@ -34,23 +34,27 @@ def main() -> None:
         epilog=f"Available benchmarks: {', '.join(list_benchmarks())}",
     )
     parser.add_argument(
-        "--benchmark", "-b",
+        "--benchmark",
+        "-b",
         type=str,
         help="Name of benchmark to run (e.g., electric-power, gravitational-pe)",
     )
     parser.add_argument(
-        "--all", "-a",
+        "--all",
+        "-a",
         action="store_true",
         help="Run all registered benchmarks",
     )
     parser.add_argument(
-        "--config", "-c",
+        "--config",
+        "-c",
         type=str,
         default="configs/default.yaml",
         help="Path to YAML config file (default: configs/default.yaml)",
     )
     parser.add_argument(
-        "--results-dir", "-r",
+        "--results-dir",
+        "-r",
         type=str,
         default="results",
         help="Directory for results output (default: results/)",
@@ -69,12 +73,14 @@ def main() -> None:
         sys.exit(1)
 
     config = load_config(args.config)
-    
+
     if args.test_run:
         config["n_runs"] = 1
         config["seed"] = 42
-        print("\n  [TEST RUN] Executing a single run on a fixed seed for regression testing.")
-        
+        print(
+            "\n  [TEST RUN] Executing a single run on a fixed seed for regression testing."
+        )
+
     results_dir = Path(args.results_dir)
 
     # Determine which benchmarks to run
@@ -100,9 +106,9 @@ def main() -> None:
         plot_benchmark_comparison(all_results, comp_path)
         print(f"    ✓ {comp_path.name}")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"  All results saved to: {results_dir.resolve()}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
 
 if __name__ == "__main__":

@@ -18,7 +18,7 @@ from deap import algorithms, tools
 from src.benchmarks import Benchmark, get_benchmark
 from src.primitives import build_primitive_set
 from src.gp_engine import setup_toolbox, evaluate_individual, build_stats
-from src.simplify import simplify_individual
+from src.simplify import simplify_individual, safe_algebraic_reduction
 
 
 def run_single(
@@ -114,16 +114,17 @@ def run_experiment(
 
     pset = build_primitive_set(
         n_vars=benchmark.n_vars,
-        include_sqrt=config.get("include_sqrt", True),
     )
     toolbox = setup_toolbox(pset, config)
 
     if verbose:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"  Benchmark: {benchmark.name} — {benchmark.description}")
-        print(f"  Runs: {n_runs} | Pop: {config.get('population_size', 500)}"
-              f" | Gens: {config.get('n_generations', 50)}")
-        print(f"{'='*60}")
+        print(
+            f"  Runs: {n_runs} | Pop: {config.get('population_size', 500)}"
+            f" | Gens: {config.get('n_generations', 50)}"
+        )
+        print(f"{'=' * 60}")
 
     runs = []
     base_seed = config.get("seed", 42)
@@ -133,7 +134,7 @@ def run_experiment(
         runs.append(result)
         if verbose:
             print(
-                f"  Run {i+1:3d}/{n_runs}: "
+                f"  Run {i + 1:3d}/{n_runs}: "
                 f"fitness={result['best_fitness']:.6e}  "
                 f"size={result['best_size']:3d}  "
                 f"time={result['elapsed_seconds']:.1f}s"
@@ -148,6 +149,8 @@ def run_experiment(
     best_individual = runs[best_idx]["hof"][0]
     simp = simplify_individual(best_individual)
 
+    compact_expr = safe_algebraic_reduction(simp["simplified_str"], timeout_seconds=5)
+
     summary = {
         "mean_fitness": float(np.mean(fitnesses)),
         "std_fitness": float(np.std(fitnesses)),
@@ -158,12 +161,13 @@ def run_experiment(
         "std_size": float(np.std(sizes)),
         "best_overall_expr": runs[best_idx]["best_expr"],
         "best_overall_fitness": runs[best_idx]["best_fitness"],
-        "simplified_expr": simp["simplified_str"],
+        "simplified_expr": compact_expr,
     }
 
     if verbose:
-        print(f"\n  Summary: {summary['mean_fitness']:.6e} "
-              f"± {summary['std_fitness']:.6e}")
+        print(
+            f"\n  Summary: {summary['mean_fitness']:.6e} ± {summary['std_fitness']:.6e}"
+        )
         print(f"  Best: {summary['best_overall_fitness']:.6e}")
         print(f"  Expr: {summary['simplified_expr']}")
 
@@ -175,24 +179,34 @@ def run_experiment(
         writer = csv.DictWriter(
             f,
             fieldnames=[
-                "run", "seed", "best_fitness", "best_size",
-                "best_depth", "elapsed_seconds", "best_expr",
+                "run",
+                "seed",
+                "best_fitness",
+                "best_size",
+                "best_depth",
+                "elapsed_seconds",
+                "best_expr",
                 "algebraic_expr",
             ],
         )
         writer.writeheader()
         for i, r in enumerate(runs):
             alg = simplify_individual(r["hof"][0])
-            writer.writerow({
-                "run": i + 1,
-                "seed": base_seed + i,
-                "best_fitness": r["best_fitness"],
-                "best_size": r["best_size"],
-                "best_depth": r["best_depth"],
-                "elapsed_seconds": r["elapsed_seconds"],
-                "best_expr": r["best_expr"],
-                "algebraic_expr": alg["simplified_str"],
-            })
+            compact_alg = safe_algebraic_reduction(
+                alg["simplified_str"], timeout_seconds=2
+            )
+            writer.writerow(
+                {
+                    "run": i + 1,
+                    "seed": base_seed + i,
+                    "best_fitness": r["best_fitness"],
+                    "best_size": r["best_size"],
+                    "best_depth": r["best_depth"],
+                    "elapsed_seconds": r["elapsed_seconds"],
+                    "best_expr": r["best_expr"],
+                    "algebraic_expr": compact_alg,
+                }
+            )
 
     if verbose:
         print(f"  Saved: {csv_path}")
