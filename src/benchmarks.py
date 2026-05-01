@@ -102,11 +102,6 @@ class Benchmark:
 
 # ── Mechanics ─────────────────────────────────────────────────────────────────
 
-def _kinetic_energy(x: float, y: float) -> float:
-    """KE = ½·m·v²  |  x → mass (kg), y → velocity (m/s)"""
-    return 0.5 * x * y**2
-
-
 def _gravitational_pe(x: float, y: float) -> float:
     """PE = m·g·h  |  x → mass (kg), y → height (m), g = 9.81 baked in"""
     return x * 9.81 * y
@@ -115,11 +110,6 @@ def _gravitational_pe(x: float, y: float) -> float:
 def _newtons_gravity(x: float, y: float, z: float) -> float:
     """F = m₁·m₂/r²  |  x → m₁, y → m₂, z → r  (unit G = 1)"""
     return x * y / max(z**2, 1e-10)
-
-
-def _hookes_law(x: float, y: float) -> float:
-    """F = −k·Δx  |  x → spring constant k, y → displacement"""
-    return -x * y
 
 
 def _momentum(x: float, y: float) -> float:
@@ -134,22 +124,7 @@ def _ideal_gas_pressure(x: float, y: float, z: float) -> float:
     return x * 8.314 * y / max(abs(z), 1e-6)
 
 
-def _heat_conduction(x: float, y: float) -> float:
-    """Q = k·ΔT  |  x → thermal conductivity k, y → temperature diff ΔT"""
-    return x * y
-
-
 # ── Electromagnetism ──────────────────────────────────────────────────────────
-
-def _coulombs_law(x: float, y: float, z: float) -> float:
-    """F = q₁·q₂/r²  |  x → q₁, y → q₂, z → r  (unit k = 1)"""
-    return x * y / max(z**2, 1e-10)
-
-
-def _ohms_law(x: float, y: float) -> float:
-    """V = I·R  |  x → current I (A), y → resistance R (Ω)"""
-    return x * y
-
 
 def _electric_power(x: float, y: float) -> float:
     """P = I²·R  |  x → current I (A), y → resistance R (Ω)"""
@@ -158,26 +133,12 @@ def _electric_power(x: float, y: float) -> float:
 
 # ── Waves & Optics ────────────────────────────────────────────────────────────
 
-def _wave_speed(x: float, y: float) -> float:
-    """v = f·λ  |  x → frequency f (Hz), y → wavelength λ (m)"""
-    return x * y
-
-
 def _pendulum_period(x: float, y: float) -> float:
     """T = 2π·√(L/g)  |  x → length L (m), y → gravity g (m/s²)"""
     return 2 * math.pi * math.sqrt(abs(x) / max(abs(y), 1e-6))
 
 
-# ── Relativity ────────────────────────────────────────────────────────────────
 
-def _rest_energy(x: float) -> float:
-    """E = m·c²  |  x → mass m  (natural units: c = 1, so E = m)"""
-    return x
-
-
-def _lorentz_factor(x: float) -> float:
-    """γ = 1/√(1−β²)  |  x → β = v/c ∈ [0, 0.99]"""
-    return 1.0 / math.sqrt(1.0 - min(x**2, 1.0 - 1e-9))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -186,15 +147,6 @@ def _lorentz_factor(x: float) -> float:
 
 BENCHMARKS: dict[str, Benchmark] = {
     # ── Mechanics ─────────────────────────────────────────────────────────────
-    "kinetic-energy": Benchmark(
-        name="kinetic-energy",
-        func=_kinetic_energy,
-        domain=(0.1, 10.0),
-        n_points=100,
-        n_vars=2,
-        description="½·m·v²  (x=mass, y=velocity)",
-        var_names=["mass (kg)", "velocity (m/s)"],
-    ),
     "gravitational-pe": Benchmark(
         name="gravitational-pe",
         func=_gravitational_pe,
@@ -212,15 +164,6 @@ BENCHMARKS: dict[str, Benchmark] = {
         n_vars=3,
         description="m₁·m₂/r²  (x=m₁, y=m₂, z=r, unit G)",
         var_names=["m1 (kg)", "m2 (kg)", "r (m)"],
-    ),
-    "hookes-law": Benchmark(
-        name="hookes-law",
-        func=_hookes_law,
-        domain=(0.1, 10.0),
-        n_points=100,
-        n_vars=2,
-        description="-k·x  (x=spring constant, y=displacement)",
-        var_names=["k (N/m)", "displacement (m)"],
     ),
     "momentum": Benchmark(
         name="momentum",
@@ -242,35 +185,8 @@ BENCHMARKS: dict[str, Benchmark] = {
         description="nRT/V  (x=n mol, y=T K, z=V m³, R=8.314)",
         var_names=["n (mol)", "T (K)", "V (m³)"],
     ),
-    "heat-conduction": Benchmark(
-        name="heat-conduction",
-        func=_heat_conduction,
-        domain=(0.1, 10.0),
-        n_points=100,
-        n_vars=2,
-        description="k·ΔT  (x=conductivity, y=temp diff)",
-        var_names=["k (W/m·K)", "ΔT (K)"],
-    ),
 
     # ── Electromagnetism ──────────────────────────────────────────────────────
-    "coulombs-law": Benchmark(
-        name="coulombs-law",
-        func=_coulombs_law,
-        domain=(0.1, 5.0),
-        n_points=200,
-        n_vars=3,
-        description="q₁·q₂/r²  (x=q₁, y=q₂, z=r, unit k)",
-        var_names=["q1 (C)", "q2 (C)", "r (m)"],
-    ),
-    "ohms-law": Benchmark(
-        name="ohms-law",
-        func=_ohms_law,
-        domain=(0.1, 10.0),
-        n_points=100,
-        n_vars=2,
-        description="I·R  (x=current, y=resistance)",
-        var_names=["I (A)", "R (Ω)"],
-    ),
     "electric-power": Benchmark(
         name="electric-power",
         func=_electric_power,
@@ -282,15 +198,6 @@ BENCHMARKS: dict[str, Benchmark] = {
     ),
 
     # ── Waves & Optics ────────────────────────────────────────────────────────
-    "wave-speed": Benchmark(
-        name="wave-speed",
-        func=_wave_speed,
-        domain=(1.0, 100.0),
-        n_points=100,
-        n_vars=2,
-        description="f·λ  (x=frequency Hz, y=wavelength m)",
-        var_names=["f (Hz)", "λ (m)"],
-    ),
     "pendulum-period": Benchmark(
         name="pendulum-period",
         func=_pendulum_period,
@@ -301,25 +208,6 @@ BENCHMARKS: dict[str, Benchmark] = {
         var_names=["L (m)", "g (m/s²)"],
     ),
 
-    # ── Relativity ────────────────────────────────────────────────────────────
-    "rest-energy": Benchmark(
-        name="rest-energy",
-        func=_rest_energy,
-        domain=(0.001, 1.0),
-        n_points=50,
-        n_vars=1,
-        description="E = m·c²  (natural units, c=1; x=mass)",
-        var_names=["mass (kg)"],
-    ),
-    "lorentz-factor": Benchmark(
-        name="lorentz-factor",
-        func=_lorentz_factor,
-        domain=(0.0, 0.99),
-        n_points=50,
-        n_vars=1,
-        description="γ = 1/√(1−β²)  (x=β=v/c)",
-        var_names=["β = v/c"],
-    ),
 }
 
 

@@ -19,7 +19,7 @@ min_init_depth: 2
 max_init_depth: 6
 
 # Primitive set options  (physics-focused defaults)
-include_sqrt: true       # protectedSqrt — needed for pendulum, Lorentz
+include_sqrt: true       # protectedSqrt — needed for pendulum
 
 # Experiment
 n_runs: 30

@@ -126,8 +126,9 @@ def run_experiment(
         print(f"{'='*60}")
 
     runs = []
+    base_seed = config.get("seed", 42)
     for i in range(n_runs):
-        seed = 42 + i
+        seed = base_seed + i
         result = run_single(toolbox, benchmark, config, seed)
         runs.append(result)
         if verbose:
@@ -184,7 +185,7 @@ def run_experiment(
             alg = simplify_individual(r["hof"][0])
             writer.writerow({
                 "run": i + 1,
-                "seed": 42 + i,
+                "seed": base_seed + i,
                 "best_fitness": r["best_fitness"],
                 "best_size": r["best_size"],
                 "best_depth": r["best_depth"],

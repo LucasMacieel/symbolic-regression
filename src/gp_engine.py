@@ -91,23 +91,18 @@ def evaluate_individual(
     signal.setitimer(signal.ITIMER_REAL, timeout_seconds)
 
     try:
-        se_sum = 0.0
-        n = len(y)
         if n_vars == 1:
-            for i in range(n):
-                pred = func(float(X[i]))
-                if not math.isfinite(pred):
-                    return (PENALTY,)
-                se_sum += (pred - y[i]) ** 2
+            pred = func(X.ravel())
         else:
-            for i in range(n):
-                pred = func(*[float(v) for v in X[i]])
-                if not math.isfinite(pred):
-                    return (PENALTY,)
-                se_sum += (pred - y[i]) ** 2
-        mse = se_sum / n
+            pred = func(*[X[:, j] for j in range(n_vars)])
+            
+        if not np.all(np.isfinite(pred)):
+            return (PENALTY,)
+            
+        mse = float(np.mean((pred - y) ** 2))
         if not math.isfinite(mse):
             return (PENALTY,)
+            
         return (mse,)
     except _TimeoutError:
         return (PENALTY,)

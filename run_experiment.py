@@ -36,7 +36,7 @@ def main() -> None:
     parser.add_argument(
         "--benchmark", "-b",
         type=str,
-        help="Name of benchmark to run (e.g., koza-1, nguyen-5)",
+        help="Name of benchmark to run (e.g., electric-power, gravitational-pe)",
     )
     parser.add_argument(
         "--all", "-a",
@@ -55,6 +55,11 @@ def main() -> None:
         default="results",
         help="Directory for results output (default: results/)",
     )
+    parser.add_argument(
+        "--test-run",
+        action="store_true",
+        help="Only do a single run on a fixed seed for regression testing",
+    )
 
     args = parser.parse_args()
 
@@ -64,6 +69,12 @@ def main() -> None:
         sys.exit(1)
 
     config = load_config(args.config)
+    
+    if args.test_run:
+        config["n_runs"] = 1
+        config["seed"] = 42
+        print("\n  [TEST RUN] Executing a single run on a fixed seed for regression testing.")
+        
     results_dir = Path(args.results_dir)
 
     # Determine which benchmarks to run

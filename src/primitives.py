@@ -11,7 +11,7 @@ The default configuration includes only the operators required by the
 physics benchmarks in this project:
 
     Core arithmetic : add, sub, mul, protectedDiv, neg
-    Square root     : protectedSqrt  (pendulum period, Lorentz factor)
+    Square root     : protectedSqrt  (pendulum period)
 """
 
 from __future__ import annotations
@@ -20,6 +20,7 @@ import math
 import operator
 import random
 
+import numpy as np
 from deap import gp
 
 
@@ -32,31 +33,35 @@ def _rand_const() -> float:
 # Protected operators
 # ──────────────────────────────────────────────────────────────────────────────
 
-def protectedDiv(left: float, right: float) -> float:
-    """Division protected against zero-division."""
-    if abs(right) < 1e-10:
-        return 1.0
-    return left / right
+def protectedDiv(left, right):
+    """Division protected against zero-division (vectorized)."""
+    with np.errstate(divide='ignore', invalid='ignore'):
+        if np.isscalar(right):
+            if abs(right) < 1e-10:
+                return 1.0
+            return left / right
+        
+        right_abs = np.abs(right)
+        mask = right_abs < 1e-10
+        safe_right = np.where(mask, 1.0, right)
+        res = left / safe_right
+        return np.where(mask, 1.0, res)
+
+def protectedSqrt(x):
+    """Square root protected against negative arguments (vectorized)."""
+    if np.isscalar(x):
+        return math.sqrt(abs(x))
+    return np.sqrt(np.abs(x))
 
 
-def protectedLog(x: float) -> float:
-    """Natural logarithm protected against non-positive arguments."""
-    if abs(x) < 1e-10:
-        return 0.0
-    return math.log(abs(x))
-
-
-def protectedSqrt(x: float) -> float:
-    """Square root protected against negative arguments."""
-    return math.sqrt(abs(x))
-
-
-def protectedExp(x: float) -> float:
-    """Exponential clamped to avoid overflow."""
-    try:
-        return math.exp(min(x, 100.0))
-    except OverflowError:
-        return math.exp(100.0)
+def protectedExp(x):
+    """Exponential clamped to avoid overflow (vectorized)."""
+    if np.isscalar(x):
+        try:
+            return math.exp(min(x, 100.0))
+        except OverflowError:
+            return math.exp(100.0)
+    return np.exp(np.minimum(x, 100.0))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -79,7 +84,7 @@ def build_primitive_set(
         Number of input variables.
     include_sqrt : bool
         Whether to include protectedSqrt.
-        Default ``True`` — required for pendulum period and Lorentz factor.
+        Default ``True`` — required for pendulum period.
         Default ``False`` — not needed for physics benchmarks.
 
     Returns
@@ -96,7 +101,7 @@ def build_primitive_set(
     pset.addPrimitive(protectedDiv, 2)
     pset.addPrimitive(operator.neg, 1)
 
-    # Square root — needed for pendulum period and Lorentz factor
+    # Square root — needed for pendulum period
     if include_sqrt:
         pset.addPrimitive(protectedSqrt, 1)
 
