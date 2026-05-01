@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-from src.benchmarks import list_benchmarks
+from src.benchmarks import list_benchmarks, BENCHMARKS
 from src.experiment import run_experiment
 from src.visualization import generate_all_plots, plot_benchmark_comparison
 

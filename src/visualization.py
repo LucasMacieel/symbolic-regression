@@ -145,6 +145,35 @@ def plot_convergence(
 # 2. Tree visualization (Graphviz dot layout via pydot)
 # ──────────────────────────────────────────────────────────────────────────────
 
+def _hierarchy_layout(
+    G: nx.Graph, root: int, width: float = 1.0, vert_gap: float = 1.0
+) -> dict[int, tuple[float, float]]:
+    """
+    Pure-Python hierarchical (top-down) layout for a rooted tree.
+
+    Uses a simple left-to-right leaf-position assignment (Reingold-Tilford
+    style) with no external dependencies.
+    """
+    pos: dict[int, tuple[float, float]] = {}
+    leaf_counter = [0]  # mutable int via list
+
+    def _assign(node: int, depth: int, parent: int | None) -> None:
+        children = [n for n in G.neighbors(node) if n != parent]
+        if not children:
+            # Leaf: assign next x slot
+            pos[node] = (leaf_counter[0] * width, -depth * vert_gap)
+            leaf_counter[0] += 1
+        else:
+            for child in children:
+                _assign(child, depth + 1, node)
+            # Place parent above the midpoint of its children
+            xs = [pos[c][0] for c in children]
+            pos[node] = (sum(xs) / len(xs), -depth * vert_gap)
+
+    _assign(root, 0, None)
+    return pos
+
+
 def plot_tree(
     individual: gp.PrimitiveTree,
     benchmark: Benchmark,
@@ -154,11 +183,9 @@ def plot_tree(
     """
     Render a GP expression tree with color-coded nodes.
 
-    Uses Graphviz 'dot' engine for hierarchical tree layout.
+    Uses a pure-Python hierarchical layout (no Graphviz required).
     Colors: operators=blue, variables=green, constants=orange.
     """
-    from networkx.drawing.nx_pydot import graphviz_layout
-
     nodes, edges, labels = gp.graph(individual)
 
     G = nx.Graph()
@@ -180,8 +207,8 @@ def plot_tree(
             except (ValueError, TypeError):
                 node_colors.append(COLORS["primary"])  # operators
 
-    # Graphviz dot layout — produces clean hierarchical tree positioning
-    pos = graphviz_layout(G, prog="dot", root=nodes[0])
+    # Pure-Python hierarchical layout — root is always nodes[0] in DEAP
+    pos = _hierarchy_layout(G, root=nodes[0])
 
     fig, ax = plt.subplots(figsize=(max(10, len(nodes) * 0.5), max(6, individual.height * 1.5)))
 
@@ -235,6 +262,7 @@ def plot_tree(
     plt.tight_layout()
     fig.savefig(save_path)
     plt.close(fig)
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -310,7 +338,7 @@ def plot_prediction(
         label="Training points", edgecolors="#0d1117", linewidths=0.5,
     )
 
-    # Use SymPy-simplified expression if available
+    # Format expression as clean algebraic infix string
     from src.simplify import format_expression
     simplified_str = format_expression(individual)
     if len(simplified_str) > 80:

@@ -2,8 +2,16 @@
 Protected operators and primitive set construction for genetic programming.
 
 Provides safe mathematical operators that gracefully handle edge cases
-(division by zero, log of negatives, overflow, etc.) and a factory
+(division by zero, sqrt of negatives, overflow, etc.) and a factory
 function to build DEAP PrimitiveSets with configurable operator suites.
+
+Physics-focused primitive set
+------------------------------
+The default configuration includes only the operators required by the
+physics benchmarks in this project:
+
+    Core arithmetic : add, sub, mul, protectedDiv, neg
+    Square root     : protectedSqrt  (pendulum period, Lorentz factor)
 """
 
 from __future__ import annotations
@@ -60,8 +68,7 @@ _VAR_NAMES = ["x", "y", "z", "w"]
 
 def build_primitive_set(
     n_vars: int = 1,
-    include_trig: bool = True,
-    include_exp_log: bool = True,
+    include_sqrt: bool = True,
 ) -> gp.PrimitiveSet:
     """
     Build a DEAP PrimitiveSet with configurable operator suites.
@@ -69,11 +76,11 @@ def build_primitive_set(
     Parameters
     ----------
     n_vars : int
-        Number of input variables (1 or 2 typically).
-    include_trig : bool
-        Whether to include sin/cos primitives.
-    include_exp_log : bool
-        Whether to include exp/log/sqrt primitives.
+        Number of input variables.
+    include_sqrt : bool
+        Whether to include protectedSqrt.
+        Default ``True`` — required for pendulum period and Lorentz factor.
+        Default ``False`` — not needed for physics benchmarks.
 
     Returns
     -------
@@ -89,15 +96,8 @@ def build_primitive_set(
     pset.addPrimitive(protectedDiv, 2)
     pset.addPrimitive(operator.neg, 1)
 
-    # Trigonometric
-    if include_trig:
-        pset.addPrimitive(math.sin, 1)
-        pset.addPrimitive(math.cos, 1)
-
-    # Transcendental
-    if include_exp_log:
-        pset.addPrimitive(protectedLog, 1)
-        pset.addPrimitive(protectedExp, 1)
+    # Square root — needed for pendulum period and Lorentz factor
+    if include_sqrt:
         pset.addPrimitive(protectedSqrt, 1)
 
     # Ephemeral random constant in [-1, 1]

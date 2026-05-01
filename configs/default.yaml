@@ -18,9 +18,8 @@ max_tree_depth: 17
 min_init_depth: 2
 max_init_depth: 6
 
-# Primitive set options
-include_trig: true
-include_exp_log: true
+# Primitive set options  (physics-focused defaults)
+include_sqrt: true       # protectedSqrt — needed for pendulum, Lorentz
 
 # Experiment
 n_runs: 30

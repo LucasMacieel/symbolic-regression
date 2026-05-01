@@ -114,8 +114,7 @@ def run_experiment(
 
     pset = build_primitive_set(
         n_vars=benchmark.n_vars,
-        include_trig=config.get("include_trig", True),
-        include_exp_log=config.get("include_exp_log", True),
+        include_sqrt=config.get("include_sqrt", True),
     )
     toolbox = setup_toolbox(pset, config)
 
@@ -144,7 +143,7 @@ def run_experiment(
     sizes = [r["best_size"] for r in runs]
     best_idx = int(np.argmin(fitnesses))
 
-    # Simplify best expression with SymPy
+    # Convert best expression to algebraic form
     best_individual = runs[best_idx]["hof"][0]
     simp = simplify_individual(best_individual)
 
@@ -159,18 +158,13 @@ def run_experiment(
         "best_overall_expr": runs[best_idx]["best_expr"],
         "best_overall_fitness": runs[best_idx]["best_fitness"],
         "simplified_expr": simp["simplified_str"],
-        "simplified_latex": simp["latex"],
-        "simplified_complexity": simp["complexity"],
-        "simplification_strategy": simp.get("strategy", "none"),
     }
 
     if verbose:
         print(f"\n  Summary: {summary['mean_fitness']:.6e} "
               f"± {summary['std_fitness']:.6e}")
         print(f"  Best: {summary['best_overall_fitness']:.6e}")
-        print(f"  Raw:  {summary['best_overall_expr']}")
-        print(f"  SymPy: {summary['simplified_expr']}")
-        print(f"  LaTeX: {summary['simplified_latex']}")
+        print(f"  Expr: {summary['simplified_expr']}")
 
     # Save per-run CSV log
     log_dir = results_dir / "logs"
@@ -182,12 +176,12 @@ def run_experiment(
             fieldnames=[
                 "run", "seed", "best_fitness", "best_size",
                 "best_depth", "elapsed_seconds", "best_expr",
-                "simplified_expr",
+                "algebraic_expr",
             ],
         )
         writer.writeheader()
         for i, r in enumerate(runs):
-            simp_r = simplify_individual(r["hof"][0])
+            alg = simplify_individual(r["hof"][0])
             writer.writerow({
                 "run": i + 1,
                 "seed": 42 + i,
@@ -196,7 +190,7 @@ def run_experiment(
                 "best_depth": r["best_depth"],
                 "elapsed_seconds": r["elapsed_seconds"],
                 "best_expr": r["best_expr"],
-                "simplified_expr": simp_r["simplified_str"],
+                "algebraic_expr": alg["simplified_str"],
             })
 
     if verbose:
