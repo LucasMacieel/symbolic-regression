@@ -63,17 +63,24 @@ def protectedExp(x):
             return math.exp(100.0)
     return np.exp(np.minimum(x, 100.0))
 
+def protectedSin(x):
+    """Sine function (vectorized)."""
+    if np.isscalar(x):
+        return math.sin(x)
+    return np.sin(x)
+
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Primitive set factory
 # ──────────────────────────────────────────────────────────────────────────────
 
-_VAR_NAMES = ["x", "y", "z", "w"]
+_VAR_NAMES = ["x", "y", "z", "u", "v", "w", "q"]
 
 
 def build_primitive_set(
     n_vars: int = 1,
     include_sqrt: bool = True,
+    include_trig: bool = True,
 ) -> gp.PrimitiveSet:
     """
     Build a DEAP PrimitiveSet with configurable operator suites.
@@ -104,6 +111,10 @@ def build_primitive_set(
     # Square root — needed for pendulum period
     if include_sqrt:
         pset.addPrimitive(protectedSqrt, 1)
+
+    # Trigonometry — needed for projectile range
+    if include_trig:
+        pset.addPrimitive(protectedSin, 1)
 
     # Ephemeral random constant in [-1, 1]
     pset.addEphemeralConstant("rand_const", _rand_const)

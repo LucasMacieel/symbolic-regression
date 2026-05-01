@@ -91,7 +91,7 @@ class Benchmark:
 # ──────────────────────────────────────────────────────────────────────────────
 # Physics benchmark functions
 # ──────────────────────────────────────────────────────────────────────────────
-# Each function maps symbolic variable names (x, y, z, w) to physical
+# Each function maps symbolic variable names (x, y, z, u, v, w, q) to physical
 # quantities.  The docstring states the full mapping.
 #
 # Physical constants (G, k, c, R) are embedded as numeric values so the GP
@@ -100,45 +100,35 @@ class Benchmark:
 # friendly range for GP.
 # ──────────────────────────────────────────────────────────────────────────────
 
-# ── Mechanics ─────────────────────────────────────────────────────────────────
-
-def _gravitational_pe(x: float, y: float) -> float:
-    """PE = m·g·h  |  x → mass (kg), y → height (m), g = 9.81 baked in"""
-    return x * 9.81 * y
-
-
-def _newtons_gravity(x: float, y: float, z: float) -> float:
-    """F = m₁·m₂/r²  |  x → m₁, y → m₂, z → r  (unit G = 1)"""
-    return x * y / max(z**2, 1e-10)
-
-
-def _momentum(x: float, y: float) -> float:
-    """p = m·v  |  x → mass (kg), y → velocity (m/s)"""
+def _newtons_second_law(x: float, y: float) -> float:
+    """F = m·a  |  x → mass m (kg), y → acceleration a (m/s²)"""
     return x * y
 
+def _kinetic_energy(x: float, y: float) -> float:
+    """E = ½·m·v²  |  x → mass m (kg), y → velocity v (m/s)"""
+    return 0.5 * x * y**2
 
-# ── Thermodynamics ────────────────────────────────────────────────────────────
+def _newtons_gravity(x: float, y: float, z: float) -> float:
+    """F = G·m₁·m₂/r²  |  x → m₁ (kg), y → m₂ (kg), z → r (m), unit G=1"""
+    return x * y / max(z**2, 1e-10)
 
-def _ideal_gas_pressure(x: float, y: float, z: float) -> float:
-    """P = nRT/V  |  x → n (mol), y → T (K), z → V (m³), R = 8.314"""
-    return x * 8.314 * y / max(abs(z), 1e-6)
+def _keplers_third_law(x: float, y: float) -> float:
+    """T = 2π·√(a³/GM)  |  x → semi-major axis a (m), y → mass M (kg), unit G=1"""
+    return 2 * math.pi * math.sqrt(max(x**3, 0.0) / max(abs(y), 1e-10))
 
+def _stefan_boltzmann(x: float, y: float) -> float:
+    """P = σ·A·T⁴  |  x → area A (m²), y → temperature T (K), σ=5.67"""
+    return 5.67 * x * y**4
 
-# ── Electromagnetism ──────────────────────────────────────────────────────────
+def _projectile_range(x: float, y: float) -> float:
+    """R = v₀²·sin(2θ)/g  |  x → v₀ (m/s), y → θ (rad), g=9.81"""
+    return x**2 * math.sin(2 * y) / 9.81
 
-def _electric_power(x: float, y: float) -> float:
-    """P = I²·R  |  x → current I (A), y → resistance R (Ω)"""
-    return x**2 * y
-
-
-# ── Waves & Optics ────────────────────────────────────────────────────────────
-
-def _pendulum_period(x: float, y: float) -> float:
-    """T = 2π·√(L/g)  |  x → length L (m), y → gravity g (m/s²)"""
-    return 2 * math.pi * math.sqrt(abs(x) / max(abs(y), 1e-6))
-
-
-
+def _bernoullis_equation(x: float, y: float, z: float, u: float, v: float, w: float) -> float:
+    """P₂ = P₁ + ½ρ(v₁² - v₂²) + ρg(h₁ - h₂)
+    x → P₁ (Pa), y → ρ (kg/m³), z → v₁ (m/s), u → v₂ (m/s), v → h₁ (m), w → h₂ (m), g=9.81
+    """
+    return x + 0.5 * y * (z**2 - u**2) + y * 9.81 * (v - w)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -146,15 +136,23 @@ def _pendulum_period(x: float, y: float) -> float:
 # ──────────────────────────────────────────────────────────────────────────────
 
 BENCHMARKS: dict[str, Benchmark] = {
-    # ── Mechanics ─────────────────────────────────────────────────────────────
-    "gravitational-pe": Benchmark(
-        name="gravitational-pe",
-        func=_gravitational_pe,
+    "newtons-second-law": Benchmark(
+        name="newtons-second-law",
+        func=_newtons_second_law,
         domain=(0.1, 10.0),
         n_points=100,
         n_vars=2,
-        description="m·g·h  (x=mass, y=height, g=9.81 m/s²)",
-        var_names=["mass (kg)", "height (m)"],
+        description="m·a  (x=m, y=a)",
+        var_names=["m (kg)", "a (m/s²)"],
+    ),
+    "kinetic-energy": Benchmark(
+        name="kinetic-energy",
+        func=_kinetic_energy,
+        domain=(0.1, 10.0),
+        n_points=100,
+        n_vars=2,
+        description="½·m·v²  (x=m, y=v)",
+        var_names=["m (kg)", "v (m/s)"],
     ),
     "newtons-gravity": Benchmark(
         name="newtons-gravity",
@@ -162,52 +160,45 @@ BENCHMARKS: dict[str, Benchmark] = {
         domain=(0.1, 5.0),
         n_points=200,
         n_vars=3,
-        description="m₁·m₂/r²  (x=m₁, y=m₂, z=r, unit G)",
+        description="G·m₁·m₂/r²  (x=m₁, y=m₂, z=r, unit G=1)",
         var_names=["m1 (kg)", "m2 (kg)", "r (m)"],
     ),
-    "momentum": Benchmark(
-        name="momentum",
-        func=_momentum,
+    "keplers-third-law": Benchmark(
+        name="keplers-third-law",
+        func=_keplers_third_law,
         domain=(0.1, 10.0),
         n_points=100,
         n_vars=2,
-        description="m·v  (x=mass, y=velocity)",
-        var_names=["mass (kg)", "velocity (m/s)"],
+        description="2π·√(a³/GM)  (x=a, y=M, unit G=1)",
+        var_names=["a (m)", "M (kg)"],
     ),
-
-    # ── Thermodynamics ────────────────────────────────────────────────────────
-    "ideal-gas": Benchmark(
-        name="ideal-gas",
-        func=_ideal_gas_pressure,
-        domain=(0.1, 5.0),
-        n_points=300,
-        n_vars=3,
-        description="nRT/V  (x=n mol, y=T K, z=V m³, R=8.314)",
-        var_names=["n (mol)", "T (K)", "V (m³)"],
-    ),
-
-    # ── Electromagnetism ──────────────────────────────────────────────────────
-    "electric-power": Benchmark(
-        name="electric-power",
-        func=_electric_power,
-        domain=(0.1, 10.0),
-        n_points=100,
-        n_vars=2,
-        description="I²·R  (x=current, y=resistance)",
-        var_names=["I (A)", "R (Ω)"],
-    ),
-
-    # ── Waves & Optics ────────────────────────────────────────────────────────
-    "pendulum-period": Benchmark(
-        name="pendulum-period",
-        func=_pendulum_period,
+    "stefan-boltzmann": Benchmark(
+        name="stefan-boltzmann",
+        func=_stefan_boltzmann,
         domain=(0.1, 5.0),
         n_points=100,
         n_vars=2,
-        description="2π·√(L/g)  (x=length m, y=gravity m/s²)",
-        var_names=["L (m)", "g (m/s²)"],
+        description="σ·A·T⁴  (x=A, y=T, σ=5.67)",
+        var_names=["A (m²)", "T (K)"],
     ),
-
+    "projectile-range": Benchmark(
+        name="projectile-range",
+        func=_projectile_range,
+        domain=(0.1, 5.0),
+        n_points=100,
+        n_vars=2,
+        description="v₀²·sin(2θ)/g  (x=v₀, y=θ, g=9.81)",
+        var_names=["v0 (m/s)", "θ (rad)"],
+    ),
+    "bernoullis-equation": Benchmark(
+        name="bernoullis-equation",
+        func=_bernoullis_equation,
+        domain=(0.1, 5.0),
+        n_points=500,
+        n_vars=6,
+        description="P₁ + ½ρ(v₁² - v₂²) + ρg(h₁ - h₂)  (x=P₁, y=ρ, z=v₁, u=v₂, v=h₁, w=h₂, g=9.81)",
+        var_names=["P1 (Pa)", "ρ (kg/m³)", "v1 (m/s)", "v2 (m/s)", "h1 (m)", "h2 (m)"],
+    ),
 }
 
 
