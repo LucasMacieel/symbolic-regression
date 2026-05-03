@@ -36,15 +36,12 @@ _BINARY_OPS: dict[str, tuple[int, bool, str]] = {
 
 _UNARY_OPS: dict[str, str] = {
     "neg": "-",
-    "sin": "sin",
-    "cos": "cos",
-    "protectedLog": "log",
-    "protectedExp": "exp",
+    "protectedSin": "sin",
     "protectedSqrt": "sqrt",
 }
 
 # Variables and constants pass through unchanged
-_VAR_NAMES = ("x", "y", "z", "w")
+_VAR_NAMES = ("x", "y", "z", "u", "v", "w", "q")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -270,7 +267,7 @@ def format_expression(
         node_tree = _build_node_tree(individual)
         node_tree = _rewrite(node_tree)
         return _format_node(node_tree)
-    except Exception as e:
+    except Exception:
         # Graceful fallback: return the raw DEAP string
         return str(individual)
 

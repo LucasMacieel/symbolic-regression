@@ -105,6 +105,11 @@ class Benchmark:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+def _mass_energy_equivalence(x: float) -> float:
+    """E = m·c²  |  x → mass m (kg), c=3.0 (scaled)"""
+    return x * 3.0**2
+
+
 def _newtons_second_law(x: float, y: float) -> float:
     """F = m·a  |  x → mass m (kg), y → acceleration a (m/s²)"""
     return x * y
@@ -149,6 +154,15 @@ def _bernoullis_equation(
 # ──────────────────────────────────────────────────────────────────────────────
 
 BENCHMARKS: dict[str, Benchmark] = {
+    "mass-energy-equivalence": Benchmark(
+        name="mass-energy-equivalence",
+        func=_mass_energy_equivalence,
+        domain=(0.1, 10.0),
+        n_points=100,
+        n_vars=1,
+        description="m·c²  (x=m, c=3.0)",
+        var_names=["m (kg)"],
+    ),
     "newtons-second-law": Benchmark(
         name="newtons-second-law",
         func=_newtons_second_law,

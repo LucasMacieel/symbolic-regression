@@ -22,6 +22,7 @@ import numpy as np
 from deap import gp
 
 from src.benchmarks import Benchmark
+from src.simplify import format_expression
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -193,8 +194,7 @@ def _hierarchy_layout(
 def plot_tree(
     individual: gp.PrimitiveTree,
     benchmark: Benchmark,
-    save_path: Path,
-    pset: gp.PrimitiveSet | None = None,
+    save_path: Path
 ) -> None:
     """
     Render a GP expression tree with color-coded nodes.
@@ -212,7 +212,7 @@ def plot_tree(
     node_colors = []
     for n in nodes:
         label = labels[n]
-        if isinstance(label, str) and label in ("x", "y", "z", "w"):
+        if isinstance(label, str) and label in ("x", "y", "z", "u", "v", "w", "q"):
             node_colors.append(COLORS["accent"])  # variables
         elif isinstance(label, (int, float)):
             node_colors.append(COLORS["warning"])  # constants
@@ -250,9 +250,8 @@ def plot_tree(
             s = str(label)
             # Shorten function names
             s = s.replace("protectedDiv", "÷")
-            s = s.replace("protectedLog", "ln")
-            s = s.replace("protectedExp", "exp")
             s = s.replace("protectedSqrt", "√")
+            s = s.replace("protectedSin", "sin")
             display_labels[n] = s
 
     nx.draw_networkx_labels(
@@ -273,9 +272,13 @@ def plot_tree(
     ]
     ax.legend(handles=legend_items, loc="upper left", fontsize=9)
 
-    from src.simplify import format_expression
-
     simplified_str = format_expression(individual)
+    
+    # Convert programmer math to algebraic symbols for presentation
+    simplified_str = simplified_str.replace("sqrt", "√")
+    simplified_str = simplified_str.replace("**", "^")
+    simplified_str = simplified_str.replace("*", "·")
+    
     if len(simplified_str) > 80:
         simplified_str = simplified_str[:77] + "..."
     ax.set_title(
@@ -301,28 +304,27 @@ def plot_fitness_vs_complexity(
     save_path: Path,
 ) -> None:
     """Scatter plot of best fitness vs. tree size across runs."""
-    fitnesses = [r["best_fitness"] for r in runs]
-    sizes = [r["best_size"] for r in runs]
-
     fig, ax = plt.subplots(figsize=(8, 6))
-
-    scatter = ax.scatter(
-        sizes,
-        fitnesses,
-        c=fitnesses,
-        cmap="cool",
-        s=80,
-        alpha=0.8,
-        edgecolors="#0d1117",
-        linewidths=1,
-        zorder=3,
-    )
-    cbar = fig.colorbar(scatter, ax=ax, label="Fitness (MSE)")
 
     ax.set_xlabel("Tree Size (nodes)")
     ax.set_ylabel("Fitness (MSE)")
     ax.set_yscale("log")
     ax.set_title(f"Fitness vs. Complexity — {benchmark.name}")
+    
+    # Extract data from runs
+    sizes = [len(run["hof"][0]) for run in runs]
+    fitnesses = [run["best_fitness"] for run in runs]
+    
+    ax.scatter(
+        sizes,
+        fitnesses,
+        color=COLORS["primary"],
+        alpha=0.7,
+        edgecolors="#0d1117",
+        linewidths=0.5,
+        s=50,
+    )
+
     ax.grid(True, alpha=0.3)
 
     plt.tight_layout()
@@ -391,9 +393,13 @@ def plot_prediction(
     )
 
     # Format expression as clean algebraic infix string
-    from src.simplify import format_expression
-
     simplified_str = format_expression(individual)
+    
+    # Convert programmer math to algebraic symbols for presentation
+    simplified_str = simplified_str.replace("sqrt", "√")
+    simplified_str = simplified_str.replace("**", "^")
+    simplified_str = simplified_str.replace("*", "·")
+
     if len(simplified_str) > 80:
         simplified_str = simplified_str[:77] + "..."
     ax.text(
