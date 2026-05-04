@@ -51,12 +51,12 @@ def setup_toolbox(pset: gp.PrimitiveSet, config: dict[str, Any]) -> base.Toolbox
     toolbox.register("compile", gp.compile, pset=pset)
 
     fitness_tournsize = config.get("tournament_size", 7)
-    size_tournsize = config.get("size_tournament_size", 1.4)
+    parsimony_size = config.get("parsimony_pressure", 1.4)
     toolbox.register(
         "select",
         tools.selDoubleTournament,
         fitness_size=fitness_tournsize,
-        parsimony_size=size_tournsize,
+        parsimony_size=parsimony_size,
         fitness_first=True,
     )
     toolbox.register("mate", gp.cxOnePoint)

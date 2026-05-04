@@ -1,6 +1,6 @@
 # Symbolic Regression via Genetic Programming
 
-Experimental framework for symbolic regression using [DEAP](https://deap.readthedocs.io/)'s genetic programming module. Evaluates GP performance on classic benchmark functions with multi-run statistical analysis and publication-quality visualizations.
+Experimental framework for symbolic regression using [DEAP](https://deap.readthedocs.io/)'s genetic programming module. The framework evaluates GP performance on the rediscovery of fundamental physical laws from noiseless simulation data, featuring multi-run statistical analysis, robust SymPy-based algebraic simplification, and publication-quality visualizations.
 
 ## Quick Start
 
@@ -9,26 +9,29 @@ Experimental framework for symbolic regression using [DEAP](https://deap.readthe
 uv sync
 
 # Run a single benchmark
-uv run python run_experiment.py --benchmark koza-1
+uv run python run_experiment.py --benchmark mass-energy-equivalence
 
 # Run all benchmarks
 uv run python run_experiment.py --all
 
 # Custom config
-uv run python run_experiment.py --benchmark nguyen-5 --config configs/custom.yaml
+uv run python run_experiment.py --benchmark kinetic-energy --config configs/custom.yaml
 ```
 
 ## Benchmarks
 
+The benchmark suite targets the rediscovery of fundamental physical laws.
+
 | Name | Target Function | Domain | Variables |
-|------|----------------|--------|-----------|
-| `koza-1` | x⁴ + x³ + x² + x | [-1, 1] | 1 |
-| `nguyen-1` | x³ + x² + x | [-1, 1] | 1 |
-| `nguyen-4` | x⁶ + x⁵ + x⁴ + x³ + x² + x | [-1, 1] | 1 |
-| `nguyen-5` | sin(x²)·cos(x) − 1 | [-1, 1] | 1 |
-| `nguyen-7` | ln(x+1) + ln(x²+1) | [0, 2] | 1 |
-| `keijzer-4` | x³·e⁻ˣ·cos(x)·sin(x)·(sin²(x)·cos(x)−1) | [0, 10] | 1 |
-| `pagie-1` | 1/(1+x⁻⁴) + 1/(1+y⁻⁴) | [-5, 5]² | 2 |
+|------|-----------------|--------|-----------|
+| `mass-energy-equivalence` | m·c² (x=m, c=3.0) | [0.1, 10.0] | 1 |
+| `newtons-second-law` | m·a | [0.1, 10.0] | 2 |
+| `kinetic-energy` | ½·m·v² | [0.1, 10.0] | 2 |
+| `newtons-gravity` | G·m₁·m₂/r² (G=1) | [0.1, 5.0] | 3 |
+| `keplers-third-law` | 2π·√(a³/GM) (G=1) | [0.1, 10.0] | 2 |
+| `stefan-boltzmann` | σ·A·T⁴ (σ=5.67) | [0.1, 5.0] | 2 |
+| `projectile-range` | v₀²·sin(2θ)/g (g=9.81) | [0.1, 5.0] | 2 |
+| `bernoullis-equation` | P₁ + ½ρ(v₁² - v₂²) + ρg(h₁ - h₂) | [0.1, 5.0] | 6 |
 
 ## Configuration
 
@@ -40,31 +43,34 @@ n_generations: 50
 crossover_prob: 0.9
 mutation_prob: 0.1
 tournament_size: 7
+parsimony_pressure: 1.4
 max_tree_depth: 17
+min_init_depth: 2
+max_init_depth: 6
 n_runs: 30
 ```
 
-## Visualizations
+## Features & Visualizations
 
-Generated in `results/figures/`:
-
-- **Convergence curves** — Per-generation best/avg fitness with ±1σ bands
-- **Expression trees** — Color-coded tree structure of best solution
-- **Fitness vs. complexity** — Scatter plot for bloat analysis
-- **Prediction overlay** — GP prediction vs. ground truth
-- **Benchmark comparison** — Box plot across all benchmarks
+- **SymPy Integration** — Multi-strategy algebraic simplification of GP trees with variable mapping to human-readable symbols.
+- **Convergence curves** — Per-generation best/avg fitness with ±1σ bands.
+- **Expression trees** — Color-coded tree structure of the best simplified solution.
+- **Fitness vs. complexity** — Scatter plot for bloat analysis, correctly visualizing individual run data.
+- **Prediction overlay** — GP prediction vs. ground truth.
+- **Benchmark comparison** — Box plot across all benchmarks.
 
 ## Project Structure
 
-```
+```text
 ├── configs/default.yaml       # Experiment hyperparameters
 ├── run_experiment.py          # CLI entry point
 ├── src/
-│   ├── benchmarks.py          # Benchmark function registry
+│   ├── benchmarks.py          # Physics benchmark functions registry
 │   ├── primitives.py          # Protected operators & primitive sets
 │   ├── gp_engine.py           # DEAP toolbox configuration
 │   ├── experiment.py          # Multi-run experiment runner
-│   └── visualization.py       # All plotting & tree visualization
+│   ├── simplify.py            # SymPy algebraic simplification
+│   └── visualization.py       # Plotting, mathematical notation & tree visualization
 └── results/                   # Auto-generated outputs
     ├── figures/
     └── logs/
