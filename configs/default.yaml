@@ -11,7 +11,7 @@ crossover_prob: 0.9
 mutation_prob: 0.1
 
 # Selection
-tournament_size: 7
+tournament_size: 3
 parsimony_pressure: 1.4
 
 # Tree constraints

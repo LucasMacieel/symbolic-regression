@@ -50,7 +50,7 @@ def setup_toolbox(pset: gp.PrimitiveSet, config: dict[str, Any]) -> base.Toolbox
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
 
-    fitness_tournsize = config.get("tournament_size", 7)
+    fitness_tournsize = config.get("tournament_size", 3)
     parsimony_size = config.get("parsimony_pressure", 1.4)
     toolbox.register(
         "select",
@@ -60,7 +60,7 @@ def setup_toolbox(pset: gp.PrimitiveSet, config: dict[str, Any]) -> base.Toolbox
         fitness_first=True,
     )
     toolbox.register("mate", gp.cxOnePoint)
-    toolbox.register("expr_mut", gp.genFull, min_=0, max_=2, pset=pset)
+    toolbox.register("expr_mut", gp.genGrow, min_=0, max_=2, pset=pset)
     toolbox.register("mutate", gp.mutUniform, expr=toolbox.expr_mut, pset=pset)
 
     max_depth = config.get("max_tree_depth", 17)

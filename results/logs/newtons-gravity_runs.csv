@@ -1,31 +1,31 @@
 run,seed,best_fitness,best_size,best_depth,elapsed_seconds,best_expr,algebraic_expr
-1,42,2.0576226265720047e-31,9,3,4.287567138671875,"mul(neg(x), protectedDiv(neg(y), mul(z, z)))",x*y/z**2
-2,43,9.670256149254261e-31,16,5,5.372435808181763,"add(protectedDiv(add(protectedDiv(x, z), neg(protectedDiv(z, y))), protectedDiv(z, y)), protectedDiv(z, z))",x*y/z**2
-3,44,2.0576226265720047e-31,7,3,3.850985288619995,"mul(x, protectedDiv(y, mul(z, z)))",x*y/z**2
-4,45,1.522003002054855e-30,12,3,4.675265789031982,"add(protectedSin(sub(x, x)), mul(protectedDiv(y, z), protectedDiv(x, z)))",x*y/z**2 + protectedSin(0)
-5,46,2.0576226265720047e-31,7,3,4.037478446960449,"mul(protectedDiv(y, mul(z, z)), x)",x*y/z**2
-6,47,1.6967858088695808e-30,11,4,4.148071765899658,"protectedDiv(mul(x, z), protectedDiv(z, protectedDiv(protectedDiv(y, z), z)))",x*y/z**2
-7,48,1.522003002054855e-30,7,2,4.1587746143341064,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
-8,49,1.1749805488243115e-30,16,6,4.974749326705933,"add(mul(mul(z, protectedDiv(protectedDiv(protectedDiv(y, z), z), z)), x), add(y, neg(y)))",x*y/z**2
-9,50,1.7236375454514027e-30,7,3,4.4945759773254395,"protectedDiv(protectedDiv(mul(x, y), z), z)",x*y/z**2
-10,51,2.465190328815662e-34,7,2,4.116283178329468,"protectedDiv(mul(x, y), mul(z, z))",x*y/z**2
-11,52,23.090256416351334,42,9,5.9390552043914795,"add(protectedSqrt(protectedDiv(sub(mul(sub(z, x), y), 0.4674), mul(z, mul(z, 0.4674)))), protectedDiv(sub(mul(mul(protectedSqrt(sub(z, mul(z, mul(z, 0.4674)))), protectedDiv(sub(y, z), z)), mul(z, x)), neg(z)), mul(z, mul(z, 0.4674))))",(2.13949507916132*x*sqrt(z*(1 - 0.4674*z))*(y - z) + 1.46270129526206*z**2*sqrt((-y*(x - z) - 0.4674)/z**2) + 2.13949507916132*z)/z**2
-12,53,1.4540316681027378e-30,11,5,4.342580318450928,"add(mul(y, protectedDiv(sub(protectedDiv(x, z), z), z)), y)",x*y/z**2
-13,54,1.522003002054855e-30,7,2,4.130967617034912,"mul(protectedDiv(y, z), protectedDiv(x, z))",x*y/z**2
-14,55,9.164294491711182e-31,7,3,4.332615613937378,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
-15,56,1.522003002054855e-30,7,2,4.059419870376587,"mul(protectedDiv(y, z), protectedDiv(x, z))",x*y/z**2
-16,57,1.4640903187197862e-30,11,4,4.267610311508179,"mul(protectedDiv(x, z), sub(y, sub(y, protectedDiv(y, z))))",x*y/z**2
-17,58,1.5108831941311045e-30,11,5,4.173800706863403,"add(protectedDiv(mul(y, sub(protectedDiv(x, z), z)), z), y)",x*y/z**2
-18,59,1.01876617427122e-30,13,5,4.481828212738037,"neg(neg(mul(protectedDiv(protectedDiv(x, x), z), mul(protectedDiv(x, z), y))))",x*y/z**2
-19,60,5.2018843583842505e-30,9,5,5.334712028503418,"neg(neg(mul(protectedDiv(protectedDiv(y, z), z), x)))",x*y/z**2
-20,61,1.522003002054855e-30,7,2,4.037965774536133,"mul(protectedDiv(y, z), protectedDiv(x, z))",x*y/z**2
-21,62,1.7236375454514027e-30,7,3,4.055071115493774,"protectedDiv(protectedDiv(mul(x, y), z), z)",x*y/z**2
-22,63,2.0576226265720047e-31,7,3,3.927046060562134,"mul(x, protectedDiv(y, mul(z, z)))",x*y/z**2
-23,64,2.465190328815662e-34,7,2,3.755311965942383,"protectedDiv(mul(y, x), mul(z, z))",x*y/z**2
-24,65,1.522003002054855e-30,7,2,3.997831106185913,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
-25,66,9.16164633803765e-31,11,3,4.136608362197876,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), protectedDiv(y, protectedDiv(y, z)))",x*y/z**2
-26,67,1.522003002054855e-30,7,2,4.021967172622681,"mul(protectedDiv(y, z), protectedDiv(x, z))",x*y/z**2
-27,68,4.70750000740468e-31,11,5,4.0417070388793945,"protectedDiv(protectedDiv(z, protectedDiv(z, protectedDiv(y, protectedDiv(z, x)))), z)",x*y/z**2
-28,69,1.522003002054855e-30,9,4,4.090533971786499,"neg(mul(protectedDiv(x, z), protectedDiv(y, neg(z))))",x*y/z**2
-29,70,1.522003002054855e-30,7,2,3.9878990650177,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
-30,71,2.0576226265720047e-31,7,3,3.9367706775665283,"mul(x, protectedDiv(y, mul(z, z)))",x*y/z**2
+1,42,23.809564958383998,19,5,2.254899501800537,"add(protectedDiv(protectedDiv(add(y, protectedDiv(z, z)), z), y), add(protectedDiv(protectedDiv(y, z), protectedDiv(z, x)), y))",x*y/z**2 + y + 1/z + 1/(y*z)
+2,43,2.2129665108828885e-30,15,4,2.197364568710327,"add(sub(protectedDiv(y, z), protectedDiv(y, z)), protectedDiv(mul(protectedDiv(y, z), x), z))",x*y/z**2
+3,44,9.164294491711182e-31,7,3,2.367074966430664,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+4,45,9.164294491711182e-31,7,3,2.3042495250701904,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+5,46,9.163023377947887e-31,11,5,2.283341884613037,"protectedDiv(protectedDiv(y, protectedDiv(protectedDiv(y, protectedDiv(y, z)), x)), z)",x*y/z**2
+6,47,2.465190328815662e-34,7,2,2.1774444580078125,"protectedDiv(mul(y, x), mul(z, z))",x*y/z**2
+7,48,2.465190328815662e-34,11,3,2.2219090461730957,"add(protectedDiv(mul(y, x), mul(z, z)), sub(z, z))",x*y/z**2
+8,49,1.522003002054855e-30,7,2,2.403662919998169,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
+9,50,1.522003002054855e-30,7,2,2.643314838409424,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
+10,51,1.3296245381563428e-30,15,4,2.145442008972168,"add(protectedDiv(y, z), sub(mul(protectedDiv(x, z), protectedDiv(y, z)), protectedDiv(y, z)))",x*y/z**2
+11,52,9.633092923564879e-31,11,6,2.1952004432678223,"neg(neg(mul(protectedDiv(neg(x), neg(mul(z, z))), y)))",x*y/z**2
+12,53,1.522003002054855e-30,7,2,2.2949109077453613,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
+13,54,1.7236375454514027e-30,7,3,2.168769359588623,"protectedDiv(protectedDiv(mul(x, y), z), z)",x*y/z**2
+14,55,1.8299342082120798e-30,7,3,2.2233901023864746,"mul(y, protectedDiv(protectedDiv(x, z), z))",x*y/z**2
+15,56,2.0576226265720047e-31,7,3,2.26216459274292,"mul(x, protectedDiv(y, mul(z, z)))",x*y/z**2
+16,57,1.522003002054855e-30,7,2,2.335520029067993,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2
+17,58,9.164294491711182e-31,7,3,2.27077054977417,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+18,59,2.465190328815662e-34,7,2,2.1662824153900146,"protectedDiv(mul(x, y), mul(z, z))",x*y/z**2
+19,60,1.1486046523557021e-30,11,3,2.175713539123535,"mul(protectedDiv(mul(y, x), z), protectedDiv(protectedDiv(x, x), z))",x*y/z**2
+20,61,9.164294491711182e-31,7,3,2.3150129318237305,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+21,62,9.164294491711182e-31,7,3,2.1529877185821533,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+22,63,1.4659024382415223e-30,11,4,2.015570878982544,"mul(add(z, sub(protectedDiv(y, z), z)), protectedDiv(x, z))",x*y/z**2
+23,64,1.7236375454514027e-30,7,3,1.974759817123413,"protectedDiv(protectedDiv(mul(y, x), z), z)",x*y/z**2
+24,65,1.522003002054855e-30,10,4,1.9365463256835938,"mul(protectedDiv(x, z), protectedDiv(protectedSqrt(mul(y, y)), z))",x*sqrt(y**2)/z**2
+25,66,0.19891599999999993,9,4,2.0010924339294434,"add(0.446, mul(x, protectedDiv(y, mul(z, z))))",x*y/z**2 + 0.446
+26,67,2.465190328815662e-34,11,3,2.212987184524536,"add(protectedDiv(mul(x, y), mul(z, z)), sub(z, z))",x*y/z**2
+27,68,8.754904679184203e-30,13,6,2.341944694519043,"add(neg(neg(sub(protectedDiv(protectedDiv(x, z), protectedDiv(z, y)), z))), z)",x*y/z**2
+28,69,9.164294491711182e-31,7,3,2.0183510780334473,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+29,70,9.164294491711182e-31,7,3,2.0572094917297363,"protectedDiv(protectedDiv(y, protectedDiv(z, x)), z)",x*y/z**2
+30,71,1.522003002054855e-30,7,2,2.1965363025665283,"mul(protectedDiv(x, z), protectedDiv(y, z))",x*y/z**2

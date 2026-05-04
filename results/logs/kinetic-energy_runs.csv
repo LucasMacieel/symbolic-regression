@@ -1,2 +1,31 @@
 run,seed,best_fitness,best_size,best_depth,elapsed_seconds,best_expr,algebraic_expr
-1,42,88.88690827297756,46,8,2.870227336883545,"protectedSqrt(mul(add(add(add(mul(add(y, y), x), mul(neg(y), mul(x, add(y, y)))), add(add(y, y), mul(x, y))), mul(y, mul(neg(protectedSqrt(x)), y))), add(x, mul(add(protectedSin(-0.6185), sub(y, y)), mul(x, add(y, y))))))",sqrt(x*y*(1.15962737929137*y - 1)*(sqrt(x)*y + 2*x*y - 3*x - 2))
+1,42,130.1696201967391,13,6,1.940577507019043,"add(mul(mul(y, x), protectedSqrt(mul(mul(protectedSqrt(y), -0.7474), y))), y)",y*(0.864522989862039*x*sqrt(-y**(3/2)) + 1)
+2,43,101.1591750721018,14,5,2.0826597213745117,"add(neg(mul(x, y)), mul(mul(y, x), protectedSqrt(mul(y, protectedSqrt(y)))))",x*y*(sqrt(y**(3/2)) - 1)
+3,44,30.88272355732306,11,5,1.865710973739624,"add(mul(mul(mul(x, y), protectedSqrt(neg(0.2189))), y), y)",y*(0.467867502611583*I*x*y + 1)
+4,45,62.02519030710691,10,4,1.84120512008667,"add(mul(neg(mul(-0.4585, y)), mul(x, y)), y)",y*(0.4585*x*y + 1)
+5,46,16.868729568575937,14,5,1.8596289157867432,"add(x, add(mul(mul(protectedSin(0.5474), mul(y, x)), add(y, -0.8007)), y))",0.520468900988794*x*y*(y - 0.8007) + x + y
+6,47,260.4269954420159,16,6,1.7015557289123535,"mul(y, protectedSqrt(mul(neg(mul(x, x)), add(add(add(y, y), neg(y)), y))))",sqrt(2)*y*sqrt(-x**2*y)
+7,48,9.678649300782311,16,6,1.972534418106079,"add(y, sub(mul(y, add(0.6371, mul(mul(x, y), protectedSin(0.5422)))), add(y, y)))",y*(0.516021705021369*x*y - 0.3629)
+8,49,37.34374274216137,14,6,1.7516427040100098,"mul(protectedSqrt(neg(protectedDiv(mul(x, x), protectedSqrt(add(y, x))))), mul(y, y))",y**2*sqrt(-x**2/sqrt(x + y))
+9,50,141.38860558265614,30,7,2.068246841430664,"add(add(protectedDiv(y, add(protectedDiv(mul(x, add(x, x)), 0.3259), y)), protectedSqrt(mul(mul(y, protectedDiv(x, 0.3259)), mul(y, mul(x, y))))), sub(0.3259, mul(y, x)))",(y + (6.13685179502915*x**2 + y)*(-x*y + 1.75169229532888*sqrt(x**2*y**3) + 0.3259))/(6.13685179502915*x**2 + y)
+10,51,182.32108048924158,11,6,1.7511823177337646,"mul(y, mul(protectedSqrt(mul(protectedSqrt(mul(-0.4958, x)), x)), y))",0.839124942837095*y**2*sqrt(-(-x)**(3/2))
+11,52,299.9006840570812,10,4,1.703052043914795,"add(y, mul(mul(protectedSqrt(y), protectedDiv(x, 0.7389)), y))",1.35336310732169*x*y**(3/2) + y
+12,53,47.093380493447214,9,4,1.9259421825408936,"add(y, mul(mul(0.5037, mul(x, y)), y))",y*(0.5037*x*y + 1)
+13,54,16.154360893282732,22,4,1.6838748455047607,"mul(add(mul(mul(x, -0.7888), protectedDiv(y, -0.0852)), neg(mul(-0.1646, -0.3412))), mul(mul(neg(y), neg(0.8656)), protectedSin(neg(-0.0607))))",y*(0.486145780853451*x*y - 0.00294902237159709)
+14,55,543.3177174140842,14,5,1.7142326831817627,"mul(add(protectedDiv(x, x), protectedSqrt(mul(mul(y, x), add(x, y)))), y)",y*(sqrt(x*y*(x + y)) + 1)
+15,56,54.536948604966234,8,3,1.8701810836791992,"mul(mul(mul(x, y), y), protectedSqrt(0.2762))",0.525547333738837*x*y**2
+16,57,170.43364665375887,17,5,1.7798635959625244,"add(sub(protectedSqrt(y), x), mul(protectedDiv(mul(x, add(y, y)), protectedSqrt(add(y, x))), y))",2*x*y**2/sqrt(x + y) - x + sqrt(y)
+17,58,0.6407189090914244,9,3,1.7709088325500488,"mul(mul(mul(0.5111, y), 0.9837), mul(y, x))",0.50276907*x*y**2
+18,59,260.4269954420159,10,5,1.6502864360809326,"mul(y, protectedSqrt(mul(x, mul(x, add(y, y)))))",sqrt(2)*y*sqrt(x**2*y)
+19,60,146.9788991172072,14,5,2.2238059043884277,"mul(neg(add(y, protectedSqrt(add(y, y)))), mul(mul(neg(x), y), 0.3618))",0.3618*x*y*(sqrt(2)*sqrt(y) + y)
+20,61,166.57965209834205,12,4,1.7573051452636719,"add(add(y, y), mul(mul(y, x), neg(mul(y, -0.4282))))",y*(0.4282*x*y + 2)
+21,62,117.25467289047663,15,7,1.8564741611480713,"sub(mul(y, mul(0.3948, add(x, mul(x, add(y, protectedDiv(y, x)))))), -0.1466)",0.3948*y*(x*y + x + y) + 0.1466
+22,63,10.481796348429983,11,5,1.8533248901367188,"add(sub(mul(x, mul(y, mul(y, 0.5112))), y), y)",0.5112*x*y**2
+23,64,73.8061816555318,22,6,1.7001957893371582,"add(add(mul(y, x), sub(protectedSqrt(protectedDiv(sub(y, -0.0212), protectedDiv(x, x))), y)), mul(mul(x, y), mul(0.3923, y)))",0.3923*x*y**2 + x*y - y + sqrt(y + 0.0212)
+24,65,38.98586498982342,7,3,1.7438268661499023,"mul(y, mul(0.5216, mul(x, y)))",0.5216*x*y**2
+25,66,260.4269954420159,8,3,1.6932687759399414,"mul(protectedSqrt(add(y, y)), mul(y, x))",sqrt(2)*x*y**(3/2)
+26,67,223.15032238885811,15,5,1.7418909072875977,"mul(protectedSqrt(mul(mul(protectedDiv(x, x), add(-0.995, y)), protectedSqrt(y))), mul(y, x))",x*y*sqrt(sqrt(y)*(y - 0.995))
+27,68,143.9116211821069,8,3,1.7497286796569824,"mul(mul(y, x), mul(neg(-0.4585), y))",0.4585*x*y**2
+28,69,0.18744861184415376,8,3,1.8749988079071045,"mul(y, mul(protectedSqrt(-0.2515), mul(x, y)))",0.501497756724793*I*x*y**2
+29,70,176.63109691510073,15,6,1.7793562412261963,"mul(mul(x, protectedSqrt(add(mul(y, protectedSqrt(y)), mul(x, mul(-0.058, x))))), y)",x*y*sqrt(-0.058*x**2 + y**(3/2))
+30,71,371.6769101534347,10,5,1.707221508026123,"mul(y, protectedSqrt(mul(mul(add(y, x), x), y)))",y*sqrt(x*y*(x + y))
